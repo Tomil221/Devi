@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import Image from "next/image";
 import { useLanguage } from "@/components/context/LanguageContext";
 
 export function Navbar() {
@@ -37,14 +36,11 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
         {/* Logo */}
         <a href="#" className="flex items-center shrink-0">
-          <Image
+          <img
             src="/images/devisor-logo.jpg"
             alt="Devisor OY"
-            width={160}
-            height={44}
             className="object-contain"
             style={{ height: "44px", width: "auto" }}
-            priority
           />
         </a>
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { Linkedin, Instagram } from "lucide-react";
-import Image from "next/image";
 import { useLanguage } from "@/components/context/LanguageContext";
 
 export function CTAFooter() {
@@ -17,11 +16,9 @@ export function CTAFooter() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12">
           {/* Col 1 - Brand */}
           <div>
-            <Image
+            <img
               src="/images/devisor-logo.jpg"
               alt="Devisor OY"
-              width={180}
-              height={52}
               className="object-contain mb-3"
               style={{ height: "52px", width: "auto" }}
             />
