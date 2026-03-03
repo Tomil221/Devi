@@ -1,5 +1,7 @@
+"use client";
+
 import { Globe, Layers, ShieldCheck, TrendingUp } from "lucide-react";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "@/components/context/LanguageContext";
 
 const icons = [Globe, Layers, ShieldCheck, TrendingUp];
 
@@ -9,15 +11,15 @@ export function FeatureGrid() {
 
   return (
     <section
-      style={{ backgroundColor: "#3C4044", fontFamily: "'Poppins', sans-serif" }}
-      className="py-24 px-6 lg:px-12"
+      style={{ backgroundColor: "#3C4044" }}
+      className="py-24 px-6 lg:px-12 font-sans"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-16">
           <h2
             style={{ fontWeight: 700, color: "#FFFFFF" }}
-            className="text-4xl lg:text-5xl mb-4"
+            className="text-4xl lg:text-5xl mb-4 text-balance"
           >
             {fg.title}
           </h2>
@@ -32,7 +34,11 @@ export function FeatureGrid() {
         {/* Feature cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {fg.features.map((feature, i) => (
-            <FeatureCard key={feature.title} feature={feature} icon={icons[i]} />
+            <FeatureCard
+              key={feature.title}
+              feature={feature}
+              icon={icons[i]}
+            />
           ))}
         </div>
       </div>
@@ -55,7 +61,8 @@ function FeatureCard({
         padding: "28px 24px",
         borderLeft: "3px solid transparent",
         cursor: "default",
-        transition: "border-left-color 250ms ease-in-out, box-shadow 250ms ease-in-out",
+        transition:
+          "border-left-color 250ms ease-in-out, box-shadow 250ms ease-in-out",
       }}
       className="feature-card"
     >
@@ -73,10 +80,16 @@ function FeatureCard({
       >
         <Icon size={22} style={{ color: "#EB0707" }} />
       </div>
-      <h3 style={{ fontWeight: 600, color: "#FFFFFF" }} className="text-base mb-2">
+      <h3
+        style={{ fontWeight: 600, color: "#FFFFFF" }}
+        className="text-base mb-2"
+      >
         {feature.title}
       </h3>
-      <p style={{ fontWeight: 400, color: "rgba(255,255,255,0.65)" }} className="text-sm leading-relaxed">
+      <p
+        style={{ fontWeight: 400, color: "rgba(255,255,255,0.65)" }}
+        className="text-sm leading-relaxed"
+      >
         {feature.description}
       </p>
 

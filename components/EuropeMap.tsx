@@ -1,34 +1,38 @@
+"use client";
+
 import { useEffect, useRef } from "react";
-import "leaflet/dist/leaflet.css";
+import { useLanguage } from "@/components/context/LanguageContext";
 
 const projects = [
-  { lat: 55.85,     lng: -4.2531,  title: "Glasgow Project",      description: "Urban Strategy 2023" },
-  { lat: 59.903,    lng: 17.353,   title: "Uppsala Project",       description: "Cultural Study 2022" },
-  { lat: 57.2655,   lng: 16.4485,  title: "Oskarshamn Project",    description: "Heritage Research 2021" },
-  { lat: 61.6333,   lng: 17.0667,  title: "Iggesund Project",      description: "Heritage Research 2021" },
-  { lat: 59.6333,   lng: 18.0000,  title: "Brista Project",        description: "Heritage Research 2021" },
-  { lat: 58.5,      lng: 13.167,   title: "Lidköping Project",     description: "Heritage Research 2021" },
-  { lat: 48.20854,  lng: 12.39893, title: "Waldkraiburg Project",  description: "Heritage Research 2021" },
-  { lat: 64.13333,  lng: 25.36667, title: "Haapavesi Project",     description: "Heritage Research 2021" },
-  { lat: 64.48699,  lng: 24.98868, title: "Vihanti Project",       description: "Heritage Research 2021" },
-  { lat: 65.96456,  lng: 29.18833, title: "Kuusamo Project",       description: "Heritage Research 2021" },
-  { lat: 60.90693,  lng: 26.62419, title: "Kuusankoski Project",   description: "Heritage Research 2021" },
-  { lat: 62.24167,  lng: 25.74958, title: "Jyväskylä Project",     description: "Heritage Research 2021" },
-  { lat: 61.23406,  lng: 21.49075, title: "Olkiluoto Project",     description: "Heritage Research 2021" },
-  { lat: 64.68453,  lng: 24.48163, title: "Raahe Project",         description: "Heritage Research 2021" },
-  { lat: 66.50255,  lng: 25.73039, title: "Rovaniemi Project",     description: "Heritage Research 2021" },
-  { lat: 60.29299,  lng: 25.04367, title: "Vantaa Project",        description: "Heritage Research 2021" },
-  { lat: 62.60064,  lng: 29.76198, title: "Joensuu Project",       description: "Heritage Research 2021" },
-  { lat: 62.60322,  lng: 25.73014, title: "Äänekoski Project",     description: "Heritage Research 2021" },
-  { lat: 62.21005,  lng: 27.68890, title: "Huutokoski Project",    description: "Heritage Research 2021" },
-  { lat: 64.13183,  lng: 28.38783, title: "Sotkamo Project",       description: "Heritage Research 2021" },
-  { lat: 60.16662,  lng: 24.94354, title: "Helsinki Project",      description: "Heritage Research 2021" },
-  { lat: 65.73334,  lng: 24.56665, title: "Kemi Project",          description: "Heritage Research 2021" },
-  { lat: 60.46727,  lng: 26.94595, title: "Kotka Project",         description: "Heritage Research 2021" },
-  { lat: 63.07442,  lng: 27.65894, title: "Siilinjärvi Project",   description: "Heritage Research 2021" },
+  { lat: 55.85, lng: -4.2531, title: "Glasgow Project", description: "Urban Strategy 2023" },
+  { lat: 59.903, lng: 17.353, title: "Uppsala Project", description: "Cultural Study 2022" },
+  { lat: 57.2655, lng: 16.4485, title: "Oskarshamn Project", description: "Heritage Research 2021" },
+  { lat: 61.6333, lng: 17.0667, title: "Iggesund Project", description: "Heritage Research 2021" },
+  { lat: 59.6333, lng: 18.0, title: "Brista Project", description: "Heritage Research 2021" },
+  { lat: 58.5, lng: 13.167, title: "Lidköping Project", description: "Heritage Research 2021" },
+  { lat: 48.20854, lng: 12.39893, title: "Waldkraiburg Project", description: "Heritage Research 2021" },
+  { lat: 64.13333, lng: 25.36667, title: "Haapavesi Project", description: "Heritage Research 2021" },
+  { lat: 64.48699, lng: 24.98868, title: "Vihanti Project", description: "Heritage Research 2021" },
+  { lat: 65.96456, lng: 29.18833, title: "Kuusamo Project", description: "Heritage Research 2021" },
+  { lat: 60.90693, lng: 26.62419, title: "Kuusankoski Project", description: "Heritage Research 2021" },
+  { lat: 62.24167, lng: 25.74958, title: "Jyväskylä Project", description: "Heritage Research 2021" },
+  { lat: 61.23406, lng: 21.49075, title: "Olkiluoto Project", description: "Heritage Research 2021" },
+  { lat: 64.68453, lng: 24.48163, title: "Raahe Project", description: "Heritage Research 2021" },
+  { lat: 66.50255, lng: 25.73039, title: "Rovaniemi Project", description: "Heritage Research 2021" },
+  { lat: 60.29299, lng: 25.04367, title: "Vantaa Project", description: "Heritage Research 2021" },
+  { lat: 62.60064, lng: 29.76198, title: "Joensuu Project", description: "Heritage Research 2021" },
+  { lat: 62.60322, lng: 25.73014, title: "Äänekoski Project", description: "Heritage Research 2021" },
+  { lat: 62.21005, lng: 27.6889, title: "Huutokoski Project", description: "Heritage Research 2021" },
+  { lat: 64.13183, lng: 28.38783, title: "Sotkamo Project", description: "Heritage Research 2021" },
+  { lat: 60.16662, lng: 24.94354, title: "Helsinki Project", description: "Heritage Research 2021" },
+  { lat: 65.73334, lng: 24.56665, title: "Kemi Project", description: "Heritage Research 2021" },
+  { lat: 60.46727, lng: 26.94595, title: "Kotka Project", description: "Heritage Research 2021" },
+  { lat: 63.07442, lng: 27.65894, title: "Siilinjärvi Project", description: "Heritage Research 2021" },
 ];
 
 export function EuropeMap() {
+  const { t } = useLanguage();
+  const em = t.europeMap;
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<unknown>(null);
 
@@ -36,6 +40,14 @@ export function EuropeMap() {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     import("leaflet").then((L) => {
+      // Import leaflet CSS dynamically
+      if (!document.querySelector('link[href*="leaflet"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(link);
+      }
+
       const map = L.map(mapRef.current!, {
         center: [54, 15],
         zoom: 4,
@@ -79,8 +91,9 @@ export function EuropeMap() {
 
   return (
     <section
-      style={{ backgroundColor: "#3C4044", fontFamily: "'Poppins', sans-serif" }}
-      className="py-24 px-6 lg:px-12 overflow-hidden"
+      id="projects"
+      style={{ backgroundColor: "#3C4044" }}
+      className="py-24 px-6 lg:px-12 overflow-hidden font-sans"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -89,19 +102,19 @@ export function EuropeMap() {
             style={{ color: "#EB0707", fontWeight: 500 }}
             className="text-sm uppercase tracking-widest block mb-3"
           >
-            Toimialueemme
+            {em.eyebrow}
           </span>
           <h2
             style={{ fontWeight: 700, color: "#FFFFFF" }}
-            className="text-4xl lg:text-5xl mb-4"
+            className="text-4xl lg:text-5xl mb-4 text-balance"
           >
-            Projekteja ympäri Eurooppaa
+            {em.title}
           </h2>
           <p
             style={{ fontWeight: 400, color: "rgba(255,255,255,0.65)" }}
             className="text-base max-w-xl"
           >
-            Meidän työ kattaa merkittäviä kaupunkeja ja alueita ympäri Euroopan.
+            {em.subtitle}
           </p>
         </div>
 
@@ -122,9 +135,9 @@ export function EuropeMap() {
 
           {/* Side stats panel */}
           <div className="flex flex-col gap-4 lg:w-64 shrink-0">
-            <StatCard value="24+" label="Tehtyä projektia" />
-            <StatCard value="4+" label="Toimintamaata" />
-            <StatCard value="20+" label="Vuotta kokemusta" />
+            {em.stats.map((stat) => (
+              <StatCard key={stat.label} value={stat.value} label={stat.label} />
+            ))}
           </div>
         </div>
       </div>
@@ -174,10 +187,19 @@ function StatCard({ value, label }: { value: string; label: string }) {
         borderLeft: "3px solid #EB0707",
       }}
     >
-      <p style={{ fontWeight: 700, color: "#FFFFFF" }} className="text-3xl mb-1">
+      <p
+        style={{ fontWeight: 700, color: "#FFFFFF" }}
+        className="text-3xl mb-1"
+      >
         {value}
       </p>
-      <p style={{ fontWeight: 400, color: "rgba(255,255,255,0.65)", fontSize: "13px" }}>
+      <p
+        style={{
+          fontWeight: 400,
+          color: "rgba(255,255,255,0.65)",
+          fontSize: "13px",
+        }}
+      >
         {label}
       </p>
     </div>

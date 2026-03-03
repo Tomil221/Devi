@@ -1,7 +1,9 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import devisorLogo from "figma:asset/189a2d557411daaeccec54dc7449e13b82433654.png";
-import { useLanguage } from "../context/LanguageContext";
+import Image from "next/image";
+import { useLanguage } from "@/components/context/LanguageContext";
 
 export function Navbar() {
   const { lang, setLang, t } = useLanguage();
@@ -14,45 +16,58 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const sectionIds = ["services", "about", "projects", "contact"];
+
+  const scrollToSection = (index: number) => {
+    const el = document.getElementById(sectionIds[index]);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <nav
       style={{
-        fontFamily: "'Poppins', sans-serif",
         transition: "box-shadow 300ms ease",
         boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.10)" : "none",
       }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white"
+      className="fixed top-0 left-0 right-0 z-50 bg-background"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 shrink-0">
-          <img
-            src={devisorLogo}
+        <a href="#" className="flex items-center shrink-0">
+          <Image
+            src="/images/devisor-logo.jpg"
             alt="Devisor OY"
-            style={{ height: "44px", width: "auto", objectFit: "contain" }}
+            width={160}
+            height={44}
+            className="h-11 w-auto object-contain"
+            priority
           />
         </a>
 
         {/* Desktop nav links */}
         <ul className="hidden md:flex items-center gap-8">
-          {t.navbar.links.map((link) => (
+          {t.navbar.links.map((link, i) => (
             <li key={link}>
-              <a
-                href="#"
+              <button
+                onClick={() => scrollToSection(i)}
                 style={{
-                  fontFamily: "'Poppins', sans-serif",
                   fontWeight: 500,
                   color: "#3C4044",
                   position: "relative",
-                  textDecoration: "none",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
                   transition: "color 200ms ease",
                 }}
-                className="text-sm group"
+                className="text-sm font-sans group"
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#EB0707";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#EB0707";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#3C4044";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#3C4044";
                 }}
               >
                 {link}
@@ -69,7 +84,7 @@ export function Navbar() {
                   }}
                   className="nav-underline"
                 />
-              </a>
+              </button>
             </li>
           ))}
         </ul>
@@ -77,21 +92,12 @@ export function Navbar() {
         {/* Desktop right side: lang switcher + CTA */}
         <div className="hidden md:flex items-center gap-3">
           {/* Language toggle */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              border: "1px solid rgba(60,64,68,0.20)",
-              borderRadius: "6px",
-              overflow: "hidden",
-            }}
-          >
+          <div className="flex items-center border border-foreground/20 rounded-md overflow-hidden">
             {(["fi", "en"] as const).map((l) => (
               <button
                 key={l}
                 onClick={() => setLang(l)}
                 style={{
-                  fontFamily: "'Poppins', sans-serif",
                   fontWeight: lang === l ? 700 : 500,
                   fontSize: "12px",
                   padding: "5px 10px",
@@ -99,10 +105,12 @@ export function Navbar() {
                   color: lang === l ? "#FFFFFF" : "#3C4044",
                   border: "none",
                   cursor: "pointer",
-                  transition: "background-color 200ms ease, color 200ms ease",
+                  transition:
+                    "background-color 200ms ease, color 200ms ease",
                   textTransform: "uppercase",
                   letterSpacing: "0.04em",
                 }}
+                className="font-sans"
               >
                 {l}
               </button>
@@ -110,25 +118,26 @@ export function Navbar() {
           </div>
 
           {/* CTA */}
-          <a
-            href="#"
+          <button
+            onClick={() => scrollToSection(3)}
             style={{
-              fontFamily: "'Poppins', sans-serif",
               fontWeight: 600,
               backgroundColor: "#EB0707",
               color: "#FFFFFF",
               transition: "background-color 200ms ease",
             }}
-            className="inline-flex items-center px-5 py-2 rounded text-sm"
+            className="inline-flex items-center px-5 py-2 rounded text-sm font-sans cursor-pointer"
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#c40606";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "#c40606";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#EB0707";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "#EB0707";
             }}
           >
             {t.navbar.cta}
-          </a>
+          </button>
         </div>
 
         {/* Mobile menu button */}
@@ -136,6 +145,7 @@ export function Navbar() {
           className="md:hidden p-2"
           style={{ color: "#3C4044" }}
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
         >
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -143,16 +153,16 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-4">
-          {t.navbar.links.map((link) => (
-            <a
+        <div className="md:hidden bg-background border-t border-border px-6 py-4 flex flex-col gap-4">
+          {t.navbar.links.map((link, i) => (
+            <button
               key={link}
-              href="#"
-              style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 500, color: "#3C4044" }}
-              className="text-sm"
+              onClick={() => scrollToSection(i)}
+              style={{ fontWeight: 500, color: "#3C4044" }}
+              className="text-sm font-sans text-left"
             >
               {link}
-            </a>
+            </button>
           ))}
 
           {/* Mobile lang switcher */}
@@ -162,7 +172,6 @@ export function Navbar() {
                 key={l}
                 onClick={() => setLang(l)}
                 style={{
-                  fontFamily: "'Poppins', sans-serif",
                   fontWeight: lang === l ? 700 : 500,
                   fontSize: "12px",
                   padding: "5px 14px",
@@ -174,29 +183,29 @@ export function Navbar() {
                   textTransform: "uppercase",
                   letterSpacing: "0.04em",
                 }}
+                className="font-sans"
               >
                 {l}
               </button>
             ))}
           </div>
 
-          <a
-            href="#"
+          <button
+            onClick={() => scrollToSection(3)}
             style={{
-              fontFamily: "'Poppins', sans-serif",
               fontWeight: 600,
               backgroundColor: "#EB0707",
               color: "#FFFFFF",
             }}
-            className="inline-flex justify-center items-center px-5 py-2 rounded text-sm mt-1"
+            className="inline-flex justify-center items-center px-5 py-2 rounded text-sm mt-1 font-sans cursor-pointer"
           >
             {t.navbar.cta}
-          </a>
+          </button>
         </div>
       )}
 
       <style>{`
-        a:hover .nav-underline { width: 100% !important; }
+        button:hover .nav-underline { width: 100% !important; }
       `}</style>
     </nav>
   );

@@ -1,21 +1,27 @@
-import imgProjektipalvelut from "figma:asset/21cf9039b0f0e2f72b32c98d7ca865b7753b7210.png";
-import imgSuunnittelu from "figma:asset/1fb205236c37c73249e7305f6dff8aa472af5200.png";
-import { useLanguage } from "../context/LanguageContext";
+"use client";
 
-const imgUrakointi =
+import { useLanguage } from "@/components/context/LanguageContext";
+
+const INDUSTRIAL_IMAGE =
+  "https://images.unsplash.com/photo-1581092160607-ee22621dd758?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080";
+
+const ENGINEERING_IMAGE =
+  "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080";
+
+const CONTRACTING_IMAGE =
   "https://images.unsplash.com/photo-1738248427115-3489f1aaa337?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwd29ya2VycyUyMHdlbGRpbmclMjBzdGVlbCUyMGNvbnN0cnVjdGlvbiUyMHNjYWZmb2xkaW5nfGVufDF8fHx8MTc3MjQ1NjAxOHww&ixlib=rb-4.1.0&q=80&w=1080";
 
 const blockMeta = [
-  { bg: "#FFFFFF", textColor: "#3C4044", imageLeft: true, image: imgProjektipalvelut },
-  { bg: "#3C4044", textColor: "#FFFFFF", imageLeft: false, image: imgSuunnittelu },
-  { bg: "#FFFFFF", textColor: "#3C4044", imageLeft: true, image: imgUrakointi },
+  { bg: "#FFFFFF", textColor: "#3C4044", imageLeft: true, image: INDUSTRIAL_IMAGE },
+  { bg: "#3C4044", textColor: "#FFFFFF", imageLeft: false, image: ENGINEERING_IMAGE },
+  { bg: "#FFFFFF", textColor: "#3C4044", imageLeft: true, image: CONTRACTING_IMAGE },
 ];
 
 export function ServiceDetails() {
   const { t } = useLanguage();
 
   return (
-    <section style={{ fontFamily: "'Poppins', sans-serif" }}>
+    <section className="font-sans">
       {t.serviceDetails.blocks.map((block, index) => (
         <ServiceBlock
           key={index}
@@ -57,6 +63,7 @@ function ServiceBlock({
             maxHeight: "420px",
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={image}
             alt={title}
@@ -66,7 +73,9 @@ function ServiceBlock({
         </div>
 
         {/* Text content */}
-        <div className={`w-full md:w-1/2 ${imageLeft ? "md:order-2" : "md:order-1"}`}>
+        <div
+          className={`w-full md:w-1/2 ${imageLeft ? "md:order-2" : "md:order-1"}`}
+        >
           <h3
             style={{ fontWeight: 700, color: textColor }}
             className="text-3xl lg:text-4xl mb-6"
@@ -74,7 +83,7 @@ function ServiceBlock({
             {title}
           </h3>
 
-          <ul className="space-y-3 mb-8">
+          <ul className="flex flex-col gap-3 mb-8">
             {bullets.map((bullet) => (
               <li key={bullet} className="flex items-start gap-3">
                 <span
@@ -99,12 +108,11 @@ function ServiceBlock({
           </ul>
 
           <a
-            href="#"
+            href="#contact"
             style={{
               backgroundColor: "#EB0707",
               color: "#FFFFFF",
               fontWeight: 600,
-              fontFamily: "'Poppins', sans-serif",
               display: "inline-flex",
               alignItems: "center",
               padding: "12px 28px",
@@ -113,6 +121,7 @@ function ServiceBlock({
               fontSize: "14px",
               transition: "transform 200ms ease, filter 200ms ease",
             }}
+            className="font-sans"
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLAnchorElement;
               el.style.transform = "scale(1.03)";

@@ -1,5 +1,7 @@
+"use client";
+
 import { Mail, Phone } from "lucide-react";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "@/components/context/LanguageContext";
 
 export function ContactSection() {
   const { t } = useLanguage();
@@ -11,7 +13,7 @@ export function ContactSection() {
       label: c.phoneLabel,
       value: "+358 040 713 0818",
       sub: c.phoneSub,
-      href: "tel:+358 040 713 0818",
+      href: "tel:+358407130818",
     },
     {
       icon: Mail,
@@ -24,8 +26,8 @@ export function ContactSection() {
 
   return (
     <section
-      style={{ backgroundColor: "#FFFFFF", fontFamily: "'Poppins', sans-serif" }}
-      className="py-24 px-6 lg:px-12"
+      id="contact"
+      className="py-24 px-6 lg:px-12 bg-background font-sans"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -64,7 +66,16 @@ export function ContactSection() {
             }}
           >
             {/* Left red accent bar */}
-            <div style={{ position: "absolute", top: 0, left: 0, width: "4px", height: "100%", backgroundColor: "#EB0707" }} />
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "4px",
+                height: "100%",
+                backgroundColor: "#EB0707",
+              }}
+            />
 
             <h3
               style={{ fontWeight: 700, color: "#FFFFFF" }}
@@ -79,7 +90,7 @@ export function ContactSection() {
               {c.panelBody}
             </p>
 
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
               {c.bullets.map((point) => (
                 <div key={point} className="flex items-start gap-3">
                   <div
@@ -92,7 +103,13 @@ export function ContactSection() {
                       transform: "rotate(45deg)",
                     }}
                   />
-                  <span style={{ color: "rgba(255,255,255,0.80)", fontWeight: 400 }} className="text-sm">
+                  <span
+                    style={{
+                      color: "rgba(255,255,255,0.80)",
+                      fontWeight: 400,
+                    }}
+                    className="text-sm"
+                  >
                     {point}
                   </span>
                 </div>
@@ -108,7 +125,13 @@ export function ContactSection() {
 function ContactCard({
   item,
 }: {
-  item: { icon: React.ElementType; label: string; value: string; sub: string; href: string };
+  item: {
+    icon: React.ElementType;
+    label: string;
+    value: string;
+    sub: string;
+    href: string;
+  };
 }) {
   const Icon = item.icon;
 
@@ -141,9 +164,24 @@ function ContactCard({
         <Icon size={20} style={{ color: "#EB0707" }} />
       </div>
       <div>
-        <p style={{ fontWeight: 600, color: "#3C4044" }} className="text-sm mb-1">{item.label}</p>
-        <p style={{ fontWeight: 500, color: "#3C4044" }} className="text-base">{item.value}</p>
-        <p style={{ fontWeight: 400, color: "#3C4044" }} className="text-xs mt-1 opacity-55">{item.sub}</p>
+        <p
+          style={{ fontWeight: 600, color: "#3C4044" }}
+          className="text-sm mb-1"
+        >
+          {item.label}
+        </p>
+        <p
+          style={{ fontWeight: 500, color: "#3C4044" }}
+          className="text-base"
+        >
+          {item.value}
+        </p>
+        <p
+          style={{ fontWeight: 400, color: "#3C4044" }}
+          className="text-xs mt-1 opacity-55"
+        >
+          {item.sub}
+        </p>
       </div>
     </div>
   );
@@ -157,7 +195,9 @@ function ContactCard({
         }
       `}</style>
       {item.href ? (
-        <a href={item.href} style={{ textDecoration: "none" }}>{inner}</a>
+        <a href={item.href} style={{ textDecoration: "none" }}>
+          {inner}
+        </a>
       ) : (
         inner
       )}

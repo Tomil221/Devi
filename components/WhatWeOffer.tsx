@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "@/components/context/LanguageContext";
 
 const images = [
   "https://images.unsplash.com/photo-1542744094-24638eff58bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHJhdGVnaWMlMjBwbGFubmluZyUyMGJ1c2luZXNzJTIwcm9hZG1hcCUyMHdoaXRlYm9hcmR8ZW58MXx8fHwxNzcyMjk2OTA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -13,15 +15,15 @@ export function WhatWeOffer() {
 
   return (
     <section
-      style={{ backgroundColor: "#FFFFFF", fontFamily: "'Poppins', sans-serif" }}
-      className="py-24 px-6 lg:px-12"
+      id="services"
+      className="py-24 px-6 lg:px-12 bg-background font-sans"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-16">
           <h2
             style={{ fontWeight: 700, color: "#3C4044" }}
-            className="text-4xl lg:text-5xl mb-4"
+            className="text-4xl lg:text-5xl mb-4 text-balance"
           >
             {wo.title}
           </h2>
@@ -36,7 +38,11 @@ export function WhatWeOffer() {
         {/* Service cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {wo.services.map((service, index) => (
-            <ServiceCard key={index} service={service} image={images[index]} />
+            <ServiceCard
+              key={index}
+              service={service}
+              image={images[index]}
+            />
           ))}
         </div>
       </div>
@@ -63,7 +69,8 @@ function ServiceCard({
         boxShadow: hovered
           ? "0 12px 48px rgba(60,64,68,0.18)"
           : "0 2px 16px rgba(60,64,68,0.08)",
-        transition: "box-shadow 250ms ease-in-out, transform 250ms ease-in-out",
+        transition:
+          "box-shadow 250ms ease-in-out, transform 250ms ease-in-out",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         cursor: "default",
         position: "relative",
@@ -72,6 +79,7 @@ function ServiceCard({
     >
       {/* Card image */}
       <div style={{ height: "220px", overflow: "hidden", position: "relative" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={image}
           alt={service.title}
@@ -102,17 +110,19 @@ function ServiceCard({
         </p>
 
         <a
-          href="#"
+          href="#contact"
           style={{
             color: "#EB0707",
             fontWeight: 600,
             textDecoration: "none",
-            borderBottom: hovered ? "1px solid #EB0707" : "1px solid transparent",
+            borderBottom: hovered
+              ? "1px solid #EB0707"
+              : "1px solid transparent",
             transition: "border-color 200ms ease",
             fontSize: "14px",
           }}
         >
-          {service.cta} →
+          {service.cta} {"→"}
         </a>
       </div>
 
