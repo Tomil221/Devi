@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/components/context/LanguageContext";
 
 const projects = [
@@ -35,21 +35,32 @@ export function EuropeMap() {
   const em = t.europeMap;
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<unknown>(null);
+  const [cssLoaded, setCssLoaded] = useState(false);
 
+  /* 1. Load Leaflet CSS first */
   useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+    if (document.querySelector('link[href*="leaflet"]')) {
+      setCssLoaded(true);
+      return;
+    }
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    link.onload = () => setCssLoaded(true);
+    document.head.appendChild(link);
+  }, []);
+
+  /* 2. Initialize the map only after CSS is ready */
+  useEffect(() => {
+    if (!cssLoaded || !mapRef.current || mapInstanceRef.current) return;
+
+    let cancelled = false;
 
     import("leaflet").then((L) => {
-      // Import leaflet CSS dynamically
-      if (!document.querySelector('link[href*="leaflet"]')) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-        document.head.appendChild(link);
-      }
+      if (cancelled || !mapRef.current) return;
 
-      const map = L.map(mapRef.current!, {
-        center: [54, 15],
+      const map = L.map(mapRef.current, {
+        center: [60, 20],
         zoom: 4,
         zoomControl: true,
         attributionControl: false,
@@ -79,15 +90,21 @@ export function EuropeMap() {
           .addTo(map)
           .bindPopup(`<strong>${title}</strong><br/>${description}`);
       });
+
+      /* Fix Leaflet thinking the container has zero size */
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 200);
     });
 
     return () => {
+      cancelled = true;
       if (mapInstanceRef.current) {
         (mapInstanceRef.current as { remove: () => void }).remove();
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [cssLoaded]);
 
   return (
     <section
@@ -128,8 +145,23 @@ export function EuropeMap() {
               border: "1px solid rgba(255,255,255,0.08)",
               flex: "1 1 0%",
               minHeight: "480px",
+              position: "relative",
             }}
           >
+            {!cssLoaded && (
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  backgroundColor: "rgba(255,255,255,0.03)",
+                  color: "rgba(255,255,255,0.5)",
+                  fontSize: "14px",
+                }}
+              >
+                Loading map...
+              </div>
+            )}
             <div ref={mapRef} style={{ height: "480px", width: "100%" }} />
           </div>
 
@@ -143,6 +175,9 @@ export function EuropeMap() {
       </div>
 
       <style>{`
+        .leaflet-container {
+          background: #2a2d30 !important;
+        }
         .leaflet-popup-content-wrapper {
           background: #1e293b;
           color: #ffffff;
