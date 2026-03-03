@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useLanguage } from "@/components/context/LanguageContext";
+import type L from "leaflet";
 
 const projects = [
   { lat: 55.85, lng: -4.2531, title: "Glasgow Project", description: "Urban Strategy 2023" },
@@ -9,102 +10,141 @@ const projects = [
   { lat: 57.2655, lng: 16.4485, title: "Oskarshamn Project", description: "Heritage Research 2021" },
   { lat: 61.6333, lng: 17.0667, title: "Iggesund Project", description: "Heritage Research 2021" },
   { lat: 59.6333, lng: 18.0, title: "Brista Project", description: "Heritage Research 2021" },
-  { lat: 58.5, lng: 13.167, title: "Lidköping Project", description: "Heritage Research 2021" },
+  { lat: 58.5, lng: 13.167, title: "Lidkoping Project", description: "Heritage Research 2021" },
   { lat: 48.20854, lng: 12.39893, title: "Waldkraiburg Project", description: "Heritage Research 2021" },
   { lat: 64.13333, lng: 25.36667, title: "Haapavesi Project", description: "Heritage Research 2021" },
   { lat: 64.48699, lng: 24.98868, title: "Vihanti Project", description: "Heritage Research 2021" },
   { lat: 65.96456, lng: 29.18833, title: "Kuusamo Project", description: "Heritage Research 2021" },
   { lat: 60.90693, lng: 26.62419, title: "Kuusankoski Project", description: "Heritage Research 2021" },
-  { lat: 62.24167, lng: 25.74958, title: "Jyväskylä Project", description: "Heritage Research 2021" },
+  { lat: 62.24167, lng: 25.74958, title: "Jyvaskyla Project", description: "Heritage Research 2021" },
   { lat: 61.23406, lng: 21.49075, title: "Olkiluoto Project", description: "Heritage Research 2021" },
   { lat: 64.68453, lng: 24.48163, title: "Raahe Project", description: "Heritage Research 2021" },
   { lat: 66.50255, lng: 25.73039, title: "Rovaniemi Project", description: "Heritage Research 2021" },
   { lat: 60.29299, lng: 25.04367, title: "Vantaa Project", description: "Heritage Research 2021" },
   { lat: 62.60064, lng: 29.76198, title: "Joensuu Project", description: "Heritage Research 2021" },
-  { lat: 62.60322, lng: 25.73014, title: "Äänekoski Project", description: "Heritage Research 2021" },
+  { lat: 62.60322, lng: 25.73014, title: "Aanekoski Project", description: "Heritage Research 2021" },
   { lat: 62.21005, lng: 27.6889, title: "Huutokoski Project", description: "Heritage Research 2021" },
   { lat: 64.13183, lng: 28.38783, title: "Sotkamo Project", description: "Heritage Research 2021" },
   { lat: 60.16662, lng: 24.94354, title: "Helsinki Project", description: "Heritage Research 2021" },
   { lat: 65.73334, lng: 24.56665, title: "Kemi Project", description: "Heritage Research 2021" },
   { lat: 60.46727, lng: 26.94595, title: "Kotka Project", description: "Heritage Research 2021" },
-  { lat: 63.07442, lng: 27.65894, title: "Siilinjärvi Project", description: "Heritage Research 2021" },
+  { lat: 63.07442, lng: 27.65894, title: "Siilinjarvi Project", description: "Heritage Research 2021" },
 ];
 
-export function EuropeMap() {
-  const { t } = useLanguage();
-  const em = t.europeMap;
+function LeafletMap() {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<unknown>(null);
-  const [cssLoaded, setCssLoaded] = useState(false);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const [ready, setReady] = useState(false);
 
-  /* 1. Load Leaflet CSS first */
-  useEffect(() => {
-    if (document.querySelector('link[href*="leaflet"]')) {
-      setCssLoaded(true);
-      return;
-    }
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-    link.onload = () => setCssLoaded(true);
-    document.head.appendChild(link);
-  }, []);
+  const initMap = useCallback(async () => {
+    if (!mapRef.current || mapInstanceRef.current) return;
 
-  /* 2. Initialize the map only after CSS is ready */
-  useEffect(() => {
-    if (!cssLoaded || !mapRef.current || mapInstanceRef.current) return;
+    console.log("[v0] Starting map init");
 
-    let cancelled = false;
-
-    import("leaflet").then((L) => {
-      if (cancelled || !mapRef.current) return;
-
-      const map = L.map(mapRef.current, {
-        center: [60, 20],
-        zoom: 4,
-        zoomControl: true,
-        attributionControl: false,
-        scrollWheelZoom: true,
-        dragging: true,
-        maxBounds: [
-          [34, -25],
-          [72, 45],
-        ],
+    // Inject Leaflet CSS if not already present
+    if (!document.querySelector('link[href*="leaflet.css"]')) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      link.crossOrigin = "";
+      document.head.appendChild(link);
+      // Wait for CSS to load
+      await new Promise<void>((resolve) => {
+        link.onload = () => resolve();
+        link.onerror = () => resolve(); // proceed even if CSS fails
       });
+    }
 
-      mapInstanceRef.current = map;
+    console.log("[v0] CSS loaded, importing leaflet");
 
-      L.tileLayer(
+    const leaflet = await import("leaflet");
+    console.log("[v0] Leaflet imported", !!leaflet);
+
+    if (!mapRef.current) return;
+
+    const map = leaflet.map(mapRef.current, {
+      center: [60, 20],
+      zoom: 4,
+      zoomControl: true,
+      attributionControl: false,
+      scrollWheelZoom: true,
+      dragging: true,
+      maxBounds: [
+        [34, -25],
+        [72, 45],
+      ],
+    });
+
+    mapInstanceRef.current = map;
+
+    leaflet
+      .tileLayer(
         "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
         { attribution: "&copy; OpenStreetMap contributors" }
-      ).addTo(map);
+      )
+      .addTo(map);
 
-      projects.forEach(({ lat, lng, title, description }) => {
-        L.circleMarker([lat, lng], {
+    projects.forEach(({ lat, lng, title, description }) => {
+      leaflet
+        .circleMarker([lat, lng], {
           radius: 8,
           fillColor: "#EB0707",
           color: "#ffffff",
           weight: 2,
           fillOpacity: 1,
         })
-          .addTo(map)
-          .bindPopup(`<strong>${title}</strong><br/>${description}`);
-      });
-
-      /* Fix Leaflet thinking the container has zero size */
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 200);
+        .addTo(map)
+        .bindPopup(`<strong>${title}</strong><br/>${description}`);
     });
 
+    // Leaflet needs a size recalculation after mount
+    setTimeout(() => {
+      map.invalidateSize();
+      console.log("[v0] Map invalidateSize called");
+    }, 300);
+
+    setReady(true);
+    console.log("[v0] Map ready");
+  }, []);
+
+  useEffect(() => {
+    initMap();
+
     return () => {
-      cancelled = true;
       if (mapInstanceRef.current) {
-        (mapInstanceRef.current as { remove: () => void }).remove();
+        mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
     };
-  }, [cssLoaded]);
+  }, [initMap]);
+
+  return (
+    <div style={{ position: "relative", height: "480px", width: "100%" }}>
+      {!ready && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.03)",
+            color: "rgba(255,255,255,0.5)",
+            fontSize: "14px",
+            zIndex: 1,
+          }}
+        >
+          Loading map...
+        </div>
+      )}
+      <div ref={mapRef} style={{ height: "100%", width: "100%", zIndex: 2 }} />
+    </div>
+  );
+}
+
+export function EuropeMap() {
+  const { t } = useLanguage();
+  const em = t.europeMap;
 
   return (
     <section
@@ -145,24 +185,9 @@ export function EuropeMap() {
               border: "1px solid rgba(255,255,255,0.08)",
               flex: "1 1 0%",
               minHeight: "480px",
-              position: "relative",
             }}
           >
-            {!cssLoaded && (
-              <div
-                className="flex items-center justify-center"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  backgroundColor: "rgba(255,255,255,0.03)",
-                  color: "rgba(255,255,255,0.5)",
-                  fontSize: "14px",
-                }}
-              >
-                Loading map...
-              </div>
-            )}
-            <div ref={mapRef} style={{ height: "480px", width: "100%" }} />
+            <LeafletMap />
           </div>
 
           {/* Side stats panel */}
