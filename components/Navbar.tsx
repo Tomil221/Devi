@@ -42,7 +42,8 @@ export function Navbar() {
             alt="Devisor OY"
             width={160}
             height={44}
-            className="h-11 w-auto object-contain"
+            className="object-contain"
+            style={{ height: "44px", width: "auto" }}
             priority
           />
         </a>

@@ -22,7 +22,8 @@ export function CTAFooter() {
               alt="Devisor OY"
               width={180}
               height={52}
-              className="h-13 w-auto object-contain mb-3"
+              className="object-contain mb-3"
+              style={{ height: "52px", width: "auto" }}
             />
             <p
               style={{ fontWeight: 300, color: "rgba(255,255,255,0.65)" }}
